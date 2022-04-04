@@ -1,0 +1,307 @@
+import 'package:OYP/cubit/bloc.dart';
+import 'package:OYP/cubit/states.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class SignUP extends StatefulWidget {
+  const SignUP({Key? key}) : super(key: key);
+
+  @override
+  _SignUPState createState() => _SignUPState();
+}
+
+var email = TextEditingController();
+var password = TextEditingController();
+var resetPassword = TextEditingController();
+
+class _SignUPState extends State<SignUP> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+        create: (context) => OYP(),
+        child: BlocConsumer<OYP, states>(
+            builder: (context, state) {
+              return Scaffold(
+                  extendBody: true,
+                  body: Container(
+                      height: double.infinity,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("oyp/signup.jpg"),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: SingleChildScrollView(
+                          child: Column(children: [
+                            SizedBox(
+                              height: 110,
+                            ),
+                            Text(
+                              "Sign Up now \n and join ",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 28),
+                            ),
+                            Container(
+                              child: Image.asset("oyp/oyp gray.png"),
+                              width: 100,
+                            ),
+                            SizedBox(
+                              height: 100,
+                            ),
+                            TextFormField(
+                                keyboardType: TextInputType.emailAddress,
+                                controller: email,
+                                style: TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                    prefixIcon: Icon(
+                                      Icons.email,
+                                      color: Colors.white,
+                                    ),
+                                    labelText: "E-mail",
+                                    labelStyle: TextStyle(color: Colors.white),
+                                    fillColor: Colors.grey[700],
+                                    filled: true,
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Colors.white,
+                                    )),
+                                    focusColor: Colors.white,
+                                    hoverColor: Colors.white)),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            TextFormField(
+                                style: TextStyle(color: Colors.white),
+                                controller: password,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                    prefixIcon: Icon(
+                                      Icons.password_rounded,
+                                      color: Colors.white,
+                                    ),
+                                    labelStyle: TextStyle(color: Colors.white),
+                                    labelText: "Password",
+                                    filled: true,
+                                    fillColor: Colors.grey[700],
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.white)),
+                                    focusColor: Colors.white,
+                                    hoverColor: Colors.white)),
+                            const SizedBox(
+                              height: 50,
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width / 1.6,
+                              child: RaisedButton(
+                                onPressed: () async {
+                                  await OYP.GET(context).createAccount(
+                                      context, email.text, password.text);
+                                },
+                                child: const Text("Create Your Account"),
+                                color: Colors.grey[100],
+                              ),
+                            )
+                          ]),
+                        ),
+                      )));
+            },
+            listener: (context, state) {}));
+  }
+}
+
+class SignIn extends StatefulWidget {
+  const SignIn({Key? key}) : super(key: key);
+
+  @override
+  _SignInState createState() => _SignInState();
+}
+
+class _SignInState extends State<SignIn> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => OYP(),
+      child: BlocConsumer<OYP, states>(
+          builder: (context, state) {
+            return Scaffold(
+                extendBody: true,
+                body: Container(
+                    height: double.infinity,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage("oyp/signup.jpg"),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: SingleChildScrollView(
+                        child: Column(children: [
+                          SizedBox(
+                            height: 110,
+                          ),
+                          Text(
+                            "Log In to your acount ",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 28),
+                          ),
+                          Container(
+                            child: Image.asset("oyp/oyp gray.png"),
+                            width: 100,
+                          ),
+                          SizedBox(
+                            height: 100,
+                          ),
+                          TextFormField(
+                              keyboardType: TextInputType.emailAddress,
+                              controller: email,
+                              style: TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.email,
+                                    color: Colors.white,
+                                  ),
+                                  labelText: "E-mail",
+                                  labelStyle: TextStyle(color: Colors.white),
+                                  fillColor: Colors.grey[700],
+                                  filled: true,
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                    color: Colors.white,
+                                  )),
+                                  focusColor: Colors.white,
+                                  hoverColor: Colors.white)),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          TextFormField(
+                              style: TextStyle(color: Colors.white),
+                              controller: password,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.password_rounded,
+                                    color: Colors.white,
+                                  ),
+                                  labelStyle: TextStyle(color: Colors.white),
+                                  labelText: "Password",
+                                  filled: true,
+                                  fillColor: Colors.grey[700],
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
+                                  focusColor: Colors.white,
+                                  hoverColor: Colors.white)),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          TextButton(
+                              onPressed: () async {
+                                showDialog(
+                                    barrierColor: Colors.white.withOpacity(0.4),
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        backgroundColor: Colors.black,
+                                        content: Container(
+                                          height: 200,
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                "Forgot Your password",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20),
+                                              ),
+                                              SizedBox(
+                                                height: 45,
+                                              ),
+                                              Container(
+                                                  child: TextFormField(
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                                controller: resetPassword,
+                                                decoration: InputDecoration(
+                                                  filled: true,
+                                                  labelStyle: TextStyle(
+                                                      color: Colors.white),
+                                                  fillColor: Colors.grey[700],
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .white)),
+                                                  focusColor: Colors.white,
+                                                  hoverColor: Colors.white,
+                                                  labelText: "E-mail",
+                                                ),
+                                              )),
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () async {
+                                                  await OYP
+                                                      .GET(context)
+                                                      .ResetPassword(context);
+                                                },
+                                                child: Text(
+                                                  "Send email",
+                                                  style: TextStyle(
+                                                      color: Colors.black),
+                                                ),
+                                                style: ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStateProperty
+                                                            .all(Colors
+                                                                .grey[300]),
+                                                    shape: MaterialStateProperty
+                                                        .all<RoundedRectangleBorder>(
+                                                            RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              18.0),
+                                                    ))),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    });
+                              },
+                              child: Text("Forgot your password ?",
+                                  style: TextStyle(
+                                      color: Colors.grey[300],
+                                      decoration: TextDecoration.underline))),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width / 1.6,
+                            child: RaisedButton(
+                              onPressed: () async {
+                                await OYP.GET(context).signIN(context);
+                              },
+                              child: Text("Log In"),
+                              color: Colors.grey[100],
+                            ),
+                          )
+                        ]),
+                      ),
+                    )));
+          },
+          listener: (context, state) {}),
+    );
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "681905967341",
+    "project_id": "oyp-co-e17b1",
+    "storage_bucket": "oyp-co-e17b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:681905967341:android:9bb06ee5fa0516e9b37ce4",
+        "android_client_info": {
+          "package_name": "com.example.oyp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "681905967341-1nrk3rko3tr7adl8sgkjeoul55ho5llq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZN7QJX7qikMm3PEVC3pqtyJ7BKdd42fI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "681905967341-1nrk3rko3tr7adl8sgkjeoul55ho5llq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
