@@ -1,12 +1,13 @@
 import 'package:OYP/Auth/Login.dart';
 import 'package:OYP/Auth/Signup.dart';
 import 'package:OYP/Classes/sectionsWidgets.dart';
+import 'package:OYP/Classes/shared.dart';
 import 'package:OYP/cubit/bloc.dart';
 import 'package:OYP/cubit/states.dart';
 import 'package:OYP/userSettings/likesPage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -34,21 +35,7 @@ class _HomeState extends State<Home> {
                           },
                           icon: Icon(Icons.favorite_border)),
                       IconButton(
-                          onPressed: () async {
-                            await FirebaseAuth.instance
-                                .signOut()
-                                .then((value) => Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => LogIn()),
-                                    (route) => false))
-                                .catchError((onError) {
-                              return const SnackBar(
-                                content: Text("there is something error"),
-                                backgroundColor: Colors.red,
-                              );
-                            });
-                          },
+                          onPressed: () => OYP.GET(context).signOut(context),
                           icon: Icon(Icons.person))
                     ],
                     backgroundColor: Colors.black,

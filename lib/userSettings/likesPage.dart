@@ -17,16 +17,7 @@ class _LikePageState extends State<LikePage> {
       create: (context) => OYP(),
       child: BlocConsumer<OYP, states>(
           builder: (context, state) {
-            return Scaffold(
-                appBar: AppBar(),
-                body: ListView.separated(
-                    itemBuilder: (context, index) {
-                      return OYP.GET(context).likedPrograms[index];
-                    },
-                    separatorBuilder: (context, index) => SizedBox(
-                          height: 20,
-                        ),
-                    itemCount: OYP.GET(context).likedPrograms.length));
+            return Scaffold(appBar: AppBar(), body: Container());
           },
           listener: (context, state) {}),
     );

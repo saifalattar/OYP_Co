@@ -1,29 +1,29 @@
 import 'package:OYP/Auth/Signup.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:OYP/Classes/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:OYP/Auth/Login.dart';
 import 'package:OYP/mainScreens/home.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future isSignedIn() async {
+  bool isSigned = false;
+  SharedPreferences localData = await localDataBase;
+  if (localData.getString('token') == null ||
+      localData.getString('token')!.isEmpty) {
+    return isSigned;
+  } else {
+    return !isSigned;
+  }
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
+      .then((_) async {
     runApp(MaterialApp(
-        theme: ThemeData(
-            scaffoldBackgroundColor: Colors.black,
-            appBarTheme: AppBarTheme(color: Colors.transparent),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-                style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
-            ))),
-        home: FirebaseAuth.instance.currentUser != null
-            ? FirebaseAuth.instance.currentUser!.emailVerified
-                ? Home()
-                : LogIn()
-            : LogIn()));
+      theme: ThemeData(scaffoldBackgroundColor: Colors.black),
+      home: await isSignedIn() ? Home() : LogIn(),
+    ));
   });
 }

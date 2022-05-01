@@ -1,11 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
-
-import 'dart:ffi';
 import 'dart:ui';
-
 import 'package:OYP/cubit/bloc.dart';
 import 'package:OYP/cubit/states.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,7 +63,6 @@ class _FullScreenState extends State<FullScreen> {
       create: (context) => OYP(),
       child: BlocConsumer<OYP, states>(
           builder: (context, state) {
-            OYP.GET(context).getApps(widget.Collection, context);
             return Scaffold(
                 appBar: AppBar(
                   leading: IconButton(
@@ -258,27 +253,6 @@ class _FullProgramScreenState extends State<FullProgramScreen> {
         create: (context) => OYP(),
         child: BlocConsumer<OYP, states>(
             builder: (context, state) {
-              void getBOOL() async {
-                var usrlike = await OYP.GET(context).userLikes;
-                if (usrlike.getBool(
-                            "${FirebaseAuth.instance.currentUser?.uid}" +
-                                "${widget.doc}") ==
-                        false ||
-                    usrlike.getBool(
-                            "${FirebaseAuth.instance.currentUser?.uid}" +
-                                "${widget.doc}") ==
-                        null) {
-                  setState(() {
-                    isFav = false;
-                  });
-                } else {
-                  setState(() {
-                    isFav = true;
-                  });
-                }
-              }
-
-              getBOOL();
               return Scaffold(
                   appBar: AppBar(),
                   body: Padding(
@@ -303,53 +277,7 @@ class _FullProgramScreenState extends State<FullProgramScreen> {
                           Row(
                             children: [
                               IconButton(
-                                  onPressed: () async {
-                                    var usrlike =
-                                        await OYP.GET(context).userLikes;
-
-                                    if (usrlike.getBool(
-                                                "${FirebaseAuth.instance.currentUser?.uid}" +
-                                                    "${widget.doc}") ==
-                                            false ||
-                                        usrlike.getBool(
-                                                "${FirebaseAuth.instance.currentUser?.uid}" +
-                                                    "${widget.doc}") ==
-                                            null) {
-                                      await OYP
-                                          .GET(context)
-                                          .likeFunction(widget.collection,
-                                              widget.doc, true)
-                                          .then((value) async {
-                                        usrlike
-                                            .setBool(
-                                                "${FirebaseAuth.instance.currentUser?.uid}" +
-                                                    "${widget.doc}",
-                                                true)
-                                            .then((value) => isFav = true);
-                                        OYP.GET(context).getApps(
-                                            widget.collection, context);
-                                        widget.Likes += 1;
-                                        OYP.GET(context).emit(LikeState());
-                                      });
-                                    } else {
-                                      await OYP
-                                          .GET(context)
-                                          .likeFunction(widget.collection,
-                                              widget.doc, false)
-                                          .then((value) async {
-                                        usrlike
-                                            .setBool(
-                                                "${FirebaseAuth.instance.currentUser?.uid}" +
-                                                    "${widget.doc}",
-                                                false)
-                                            .then((value) => isFav = false);
-                                        OYP.GET(context).getApps(
-                                            widget.collection, context);
-                                        widget.Likes -= 1;
-                                        OYP.GET(context).emit(LikeState());
-                                      });
-                                    }
-                                  },
+                                  onPressed: () {},
                                   icon: Icon(
                                     isFav
                                         ? Icons.favorite

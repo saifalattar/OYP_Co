@@ -1,7 +1,13 @@
+import 'package:OYP/Auth/forgotPassword%20and%20Verify/verifyEmail.dart';
+import 'package:OYP/Classes/shared.dart';
 import 'package:OYP/cubit/bloc.dart';
 import 'package:OYP/cubit/states.dart';
+import 'package:OYP/mainScreens/home.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUP extends StatefulWidget {
   const SignUP({Key? key}) : super(key: key);
@@ -10,9 +16,12 @@ class SignUP extends StatefulWidget {
   _SignUPState createState() => _SignUPState();
 }
 
+var username = TextEditingController();
 var email = TextEditingController();
 var password = TextEditingController();
 var resetPassword = TextEditingController();
+var otp = TextEditingController();
+String userOTP = "";
 
 class _SignUPState extends State<SignUP> {
   @override
@@ -52,6 +61,27 @@ class _SignUPState extends State<SignUP> {
                             ),
                             SizedBox(
                               height: 100,
+                            ),
+                            TextFormField(
+                                controller: username,
+                                style: TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                    prefixIcon: Icon(
+                                      Icons.person,
+                                      color: Colors.white,
+                                    ),
+                                    labelText: "Username",
+                                    labelStyle: TextStyle(color: Colors.white),
+                                    fillColor: Colors.grey[700],
+                                    filled: true,
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Colors.white,
+                                    )),
+                                    focusColor: Colors.white,
+                                    hoverColor: Colors.white)),
+                            SizedBox(
+                              height: 15,
                             ),
                             TextFormField(
                                 keyboardType: TextInputType.emailAddress,
@@ -100,8 +130,8 @@ class _SignUPState extends State<SignUP> {
                               width: MediaQuery.of(context).size.width / 1.6,
                               child: RaisedButton(
                                 onPressed: () async {
-                                  await OYP.GET(context).createAccount(
-                                      context, email.text, password.text);
+                                  OYP.GET(context).signUp(context, email.text,
+                                      password.text, username.text);
                                 },
                                 child: const Text("Create Your Account"),
                                 color: Colors.grey[100],
@@ -206,79 +236,18 @@ class _SignInState extends State<SignIn> {
                           ),
                           TextButton(
                               onPressed: () async {
-                                showDialog(
-                                    barrierColor: Colors.white.withOpacity(0.4),
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        backgroundColor: Colors.black,
-                                        content: Container(
-                                          height: 200,
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                "Forgot Your password",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20),
-                                              ),
-                                              SizedBox(
-                                                height: 45,
-                                              ),
-                                              Container(
-                                                  child: TextFormField(
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                                controller: resetPassword,
-                                                decoration: InputDecoration(
-                                                  filled: true,
-                                                  labelStyle: TextStyle(
-                                                      color: Colors.white),
-                                                  fillColor: Colors.grey[700],
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                                  color: Colors
-                                                                      .white)),
-                                                  focusColor: Colors.white,
-                                                  hoverColor: Colors.white,
-                                                  labelText: "E-mail",
-                                                ),
-                                              )),
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              ElevatedButton(
-                                                onPressed: () async {
-                                                  await OYP
-                                                      .GET(context)
-                                                      .ResetPassword(context);
-                                                },
-                                                child: Text(
-                                                  "Send email",
-                                                  style: TextStyle(
-                                                      color: Colors.black),
-                                                ),
-                                                style: ButtonStyle(
-                                                    backgroundColor:
-                                                        MaterialStateProperty
-                                                            .all(Colors
-                                                                .grey[300]),
-                                                    shape: MaterialStateProperty
-                                                        .all<RoundedRectangleBorder>(
-                                                            RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              18.0),
-                                                    ))),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    });
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Verify(
+                                              title: "Forgot Password",
+                                              onPressed: OYP
+                                                  .GET(context)
+                                                  .forgotPassword(context,
+                                                      resetPassword.text),
+                                              buttonTitle:
+                                                  "Send email with OTP",
+                                            )));
                               },
                               child: Text("Forgot your password ?",
                                   style: TextStyle(
@@ -291,7 +260,9 @@ class _SignInState extends State<SignIn> {
                             width: MediaQuery.of(context).size.width / 1.6,
                             child: RaisedButton(
                               onPressed: () async {
-                                await OYP.GET(context).signIN(context);
+                                OYP
+                                    .GET(context)
+                                    .logIn(context, email.text, password.text);
                               },
                               child: Text("Log In"),
                               color: Colors.grey[100],

@@ -1,10 +1,7 @@
 import 'package:OYP/Auth/Signup.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
 import 'package:OYP/mainScreens/home.dart';
@@ -67,12 +64,6 @@ class LogIn extends StatelessWidget {
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width / 1.4,
-                  child: SignInButton(Buttons.Google, onPressed: () async {
-                    await googleSignIn(context);
-                  }),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.4,
                   child: SignInButton(
                     Buttons.Email,
                     text: "Sign up with Email",
@@ -105,23 +96,4 @@ class LogIn extends StatelessWidget {
       showSkipBtn: false,
     ));
   }
-}
-
-Future<void> googleSignIn(context) async {
-  var googleSignin = await GoogleSignIn().signIn();
-  GoogleSignInAuthentication authenticate = await googleSignin!.authentication;
-  AuthCredential authCredential = GoogleAuthProvider.credential(
-      idToken: authenticate.idToken, accessToken: authenticate.accessToken);
-  var fire = await FirebaseAuth.instance
-      .signInWithCredential(authCredential)
-      .then((value) {
-    var userDatabase = FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.uid);
-
-    userDatabase.doc("Liked").set({});
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const Home()),
-        (route) => false);
-  });
 }
