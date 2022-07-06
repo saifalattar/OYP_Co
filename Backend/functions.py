@@ -1,7 +1,9 @@
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from bson import ObjectId
 from random import random, randrange
 import smtplib
+import pymongo
 from jose import jwt
 from passlib.context import CryptContext
 
@@ -31,23 +33,63 @@ def verifyPassword(password: str, hashedPassword: str) -> bool:
 
 #to send email to reset password 
 def forgotPasswordEmail(sendTo: str):
-    otp = randrange(11111, 999999)
+    otp = randrange(111111, 999999)
 
     message = MIMEMultipart()
 
     message.add_header("From", "OYP")
     message.add_header("To", "you")
-    message.add_header("Subject", "Verify your account")
     message.attach(MIMEText(
-    """<img src="https://i.ibb.co/SyhTr57/oyp-black-white.png" alt="oyp-black-white" border="0" />
+    """<img src="https://i.ibb.co/SyhTr57/oyp-black-white.png" alt="oyp-black-white" border="0" width=100/>
+
+    <body style="background-color:white">
     <br/>
-    <h2>Verify your account</h2>
+    <h1>Forgot your password</h1>
+    <br />
+    <br />
+
     your OTP is:
     <h3>{}</h3>
+    </body>
     """.format(otp), "html"))
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
     server.ehlo()
     server.login("saifelbob2002@gmail.com", "saif@2002")
     server.sendmail("Order Your Programs", sendTo, message.as_string())
-    return otp
+    return str(otp)
+
+# to send verification email with OTP
+def verificationEmail(sendTo: str):
+    otp = randrange(111111, 999999)
+
+    message = MIMEMultipart()
+
+
+    message.add_header("From", "OYP Co.")
+    message.add_header("To", "you")
+    message.add_header("Subject", "Verify your OYP account")
+    message.attach(MIMEText(
+    """<img src="https://i.ibb.co/SyhTr57/oyp-black-white.png" alt="oyp-black-white" border="0" width=100 />
+    <body style="background-color:white">
+    <br/>
+    <h2>Verify your account</h2>
+    your OTP is:
+    <h3>{}</h3>
+    </body>
+    """.format(otp), "html"))
+
+    server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+    server.ehlo()
+    server.login("saifelbob2002@gmail.com", "ryexfrtblubknrmz")
+    server.sendmail("Order Your Programs", sendTo, message.as_string())
+    return str(otp)
+
+# to know if the token is for a valid user
+def isValidToken(token:str) -> bool:
+    database = pymongo.MongoClient("mongodb+srv://saifelbob2002:huhqow-mekdeg-Nizhu2@cluster0.40yph.mongodb.net/oyp?retryWrites=true&w=majority")
+    if database['OYP']['Users'].find_one({"_id":ObjectId(jwt.decode(token, key="saifIsAnNuStudent202003013", algorithms="HS256")['data'])}):
+        return True
+    else:
+        return False
+#print(isValidToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjI3MDUxMmUyOGFiMmMxNjM5NTY0YTRiIn0.V_W6wAFeoRetl8hAJW0MLm80I-XTRcwOMuomHPT6x54"))

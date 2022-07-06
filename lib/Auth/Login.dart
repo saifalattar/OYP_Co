@@ -15,7 +15,7 @@ class LogIn extends StatelessWidget {
       Slide(
           title: "Welcome To",
           backgroundColor: Colors.redAccent,
-          backgroundImage: "oyp/173815.png",
+          backgroundImage: "iyp/173815.png",
           widgetDescription: Center(
             child: Text(
               "Build Your Future",
@@ -32,7 +32,7 @@ class LogIn extends StatelessWidget {
                   height: 120,
                 ),
                 Container(
-                  child: Image.asset("oyp/oyp black white.png"),
+                  child: Image.asset("iyp/IYP.png"),
                 ),
               ],
             ),
@@ -40,7 +40,7 @@ class LogIn extends StatelessWidget {
           )),
       Slide(
           title: "Join Our Community",
-          backgroundImage: "oyp/peakpx.jpg",
+          backgroundImage: "iyp/peakpx.jpg",
           centerWidget: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(

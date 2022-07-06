@@ -1,34 +1,70 @@
 import json
-from fastapi import FastAPI ,status, APIRouter, Response
+from fastapi import Body, FastAPI ,status, APIRouter, Response
+from pydantic import Json
 import pymongo
-from Backend.functions import getToken, hashPassword, isStrongPassword
-from Backend.schemas import UserSignUp
+from Backend.functions import getToken, hashPassword, isStrongPassword, isValidToken
+from Backend.schemas import Application_From_Database, UserSignUp
+from Backend.admin import adminRouter
 from Backend.auth import authRouter
 from jose import jwt
+from bson import ObjectId
 
 oyp = FastAPI()
 database = pymongo.MongoClient("mongodb+srv://saifelbob2002:huhqow-mekdeg-Nizhu2@cluster0.40yph.mongodb.net/oyp?retryWrites=true&w=majority")
 
-
-@oyp.get('/oyp/{token}/{appId}')
-def goToApp(token, appId, response:Response):
-    isValidUser = False
-    for user in database['OYP']['Users'].find():
-        if str(user["_id"]) == jwt.decode(token, key="saifIsAnNuStudent202003013", algorithms="HS256")['data']:
-            isValidUser = True
-            print("________________sif_________________")
-            break
+# to get all apps from specific category
+@oyp.get("/oyp/allApps/{document}/{token}")
+def getAllApps(token, document, response:Response):
+    apps = []
+    if isValidToken(token):
+        for app in database["OYP"][document].find():
+            app['_id'] = str(app["_id"]) 
+            apps.append(app)
+        return apps
     else:
         response.status_code = status.HTTP_401_UNAUTHORIZED
-        return {"failure": "Can't access this content"}
-    
-    if isValidUser:
+        return {"failure": "not authorized to view this content"}
+
+# to get specific app 
+@oyp.get('/oyp/{token}/{appId}')
+def goToApp(token, appId, response:Response):
+    if isValidToken(token):
         for app in database['OYP']['apps'].find():
             if appId == str(app["_id"]):
                 app["_id"] = str(app["_id"])
                 return app
+    else:
+        response.status_code = status.HTTP_401_UNAUTHORIZED
+        return {"failure": "Can't access this content"}
     
     
+    
+@oyp.put("/oyp/{category}/{appId}")
+def likeApp(category, appId,response: Response, nLikes : dict = Body(...) ):
+    if nLikes["add"]:
+        try:
+            database["OYP"]["likes"].insert_one({"id":appId})
+            return True
+        except:
+            response.status_code = status.HTTP_404_NOT_FOUND
+            return False
+    else:
+        try:
+            database["OYP"]["likes"].delete_one({"id":appId})
+            return True
+        except :
+            response.status_code = status.HTTP_404_NOT_FOUND
+            return False
+
+@oyp.get("/oyp/likes/{appId}/isliked")
+def isliked(appId):
+    if(database["OYP"]["likes"].find_one({"id":appId}) == None):
+        return False
+    else:
+        return True
+
+
 
 
 oyp.include_router(authRouter)
+oyp.include_router(adminRouter)

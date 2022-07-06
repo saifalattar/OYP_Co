@@ -1,7 +1,11 @@
 // ignore_for_file: non_constant_identifier_names
 import 'dart:ui';
+import 'package:OYP/Classes/schemas.dart';
+import 'package:OYP/Classes/shared.dart';
 import 'package:OYP/cubit/bloc.dart';
 import 'package:OYP/cubit/states.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,34 +13,23 @@ import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class SectionWidget {
-  String title = "";
+  String image = "";
 
-  SectionWidget({String this.title = "---"}) {}
+  SectionWidget({String this.image = "---"}) {}
 
   GestureDetector show(void Function() onPressed) {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        width: 220,
+        width: 160,
         margin: EdgeInsets.all(20),
         height: 200,
         child: Stack(
           alignment: AlignmentDirectional.center,
           children: [
             ClipRRect(
-                child: ImageFiltered(
-                  imageFilter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-                  child: Container(child: Image.asset("oyp/worldMAp.jpg")),
-                ),
-                borderRadius: BorderRadius.circular(20.0)),
-            Text(
-              this.title,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
-            )
+              child: Container(child: Image.asset("${this.image}")),
+            ),
           ],
         ),
       ),
@@ -44,12 +37,11 @@ class SectionWidget {
   }
 }
 
-List<Program> programs = [];
-
 class FullScreen extends StatefulWidget {
   String title = "";
-  String Collection = '';
-  FullScreen({Key? key, this.title = "", this.Collection = ""})
+  String document = "";
+
+  FullScreen({Key? key, this.title = "", required this.document})
       : super(key: key);
 
   @override
@@ -59,6 +51,7 @@ class FullScreen extends StatefulWidget {
 class _FullScreenState extends State<FullScreen> {
   @override
   Widget build(BuildContext context) {
+    print(userToken);
     return BlocProvider(
       create: (context) => OYP(),
       child: BlocConsumer<OYP, states>(
@@ -80,130 +73,61 @@ class _FullScreenState extends State<FullScreen> {
                   ),
                   backgroundColor: Colors.black,
                 ),
-                body: ListView.separated(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width -
-                            (MediaQuery.of(context).size.width - 15)),
-                    itemBuilder: (context, index) {
-                      return programs[index];
-                    },
-                    separatorBuilder: (context, index) {
-                      return SizedBox(
-                        height: 35,
-                      );
-                    },
-                    itemCount: programs.length));
-          },
-          listener: (context, state) {}),
-    );
-  }
-}
+                body: FutureBuilder(
+                    future: OYP
+                        .GET(context)
+                        .getAllApps(userToken.toString(), widget.document),
+                    builder: (context, AsyncSnapshot snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      } else {
+                        return ListView.separated(
+                            separatorBuilder: (context, index) => SizedBox(
+                                  height: 20,
+                                ),
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Program(
+                                onTap: () async {
+                                  await Dio()
+                                      .get(
+                                          "$BASE_URL/oyp/likes/${snapshot.data[index]["_id"]}/isliked")
+                                      .then((value) {
+                                    isFav = value.data as bool;
 
-class Program extends StatefulWidget {
-  String name;
-  String Description;
-  int Likes;
-  List<String> images;
-  String mainImage;
-  double price;
-  void Function() onTap;
-  void likeFunction;
-  String collection, doc;
-
-  Program(
-      {Key? key,
-      this.name = "no name",
-      this.Description = "no description",
-      this.Likes = 0,
-      this.images = const [],
-      this.mainImage = "",
-      required this.onTap,
-      this.collection = "",
-      this.doc = "",
-      this.price = 0.0})
-      : super(key: key);
-
-  @override
-  _ProgramState createState() => _ProgramState();
-}
-
-class _ProgramState extends State<Program> {
-  // دي هتكون شكل البروجرتم من بره
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => OYP(),
-      child: BlocConsumer<OYP, states>(
-          builder: (context, state) {
-            return GestureDetector(
-              onTap: widget.onTap,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  height: 280,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                        width: 1.5, color: Colors.white.withOpacity(0.7)),
-                    color: Colors.black,
-                  ),
-                  child: Column(
-                    children: [
-                      Expanded(
-                          child: ClipRRect(
-                        child: Image.network(
-                          widget.mainImage,
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(19)),
-                      )),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  widget.name,
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  "${widget.Description}",
-                                  style: TextStyle(
-                                      color: Colors.white.withOpacity(0.7)),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.favorite_border_outlined,
-                                  color: Colors.red[900],
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                Text(
-                                  "${widget.Likes}",
-                                  style: TextStyle(
-                                      color: Colors.white.withOpacity(0.6)),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            );
+                                    Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                            transitionDuration: Duration(
+                                                seconds: 1, milliseconds: 500),
+                                            pageBuilder: (context, a1, a2) =>
+                                                FullProgramScreen(
+                                                    name: snapshot
+                                                        .data[index]['name'],
+                                                    appId:
+                                                        snapshot.data[index]
+                                                            ["_id"],
+                                                    likes: snapshot.data[index]
+                                                        ['likes'],
+                                                    images: snapshot.data[index]
+                                                        ['images'],
+                                                    category: widget.document,
+                                                    Description:
+                                                        snapshot.data[index]
+                                                            ['description'],
+                                                    price: snapshot.data[index]
+                                                        ['price'])));
+                                  });
+                                },
+                                name: snapshot.data[index]['name'],
+                                images: snapshot.data[index]['images'],
+                                Description: snapshot.data[index]
+                                    ['description'],
+                                price: snapshot.data[index]['price'],
+                              );
+                            });
+                      }
+                    }));
           },
           listener: (context, state) {}),
     );
@@ -213,19 +137,20 @@ class _ProgramState extends State<Program> {
 class FullProgramScreen extends StatefulWidget {
   String name;
   String Description;
-  int Likes;
-  List<String> images;
+  List<dynamic> images;
+  String category;
+  String appId;
   double price;
-  String collection, doc;
+  int likes;
 
   FullProgramScreen(
       {Key? key,
+      this.category = "",
+      this.appId = "",
       this.name = "no name",
       this.Description = "no description",
-      this.collection = "",
-      this.doc = "",
-      this.Likes = 0,
       this.images = const [],
+      this.likes = 0,
       this.price = 0.0})
       : super(key: key);
 
@@ -233,20 +158,27 @@ class FullProgramScreen extends StatefulWidget {
   _FullProgramScreenState createState() => _FullProgramScreenState();
 }
 
-int value = 1;
-bool isFav = false;
-String getCurrency(int value) {
-  switch (value) {
-    case 1:
-      return "USD";
-    case 2:
-      return "EUR";
-    default:
-      return "EGP";
-  }
-}
-
 class _FullProgramScreenState extends State<FullProgramScreen> {
+  int value = 1;
+
+  Map getCurrency(int value) {
+    switch (value) {
+      case 1:
+        return {1: "USD", 2: widget.price.floor()};
+      default:
+        return {1: "EUR", 2: (widget.price * 0.88).floor()};
+    }
+  }
+
+  List<Widget> getImages() {
+    List<Widget> images = [];
+    widget.images.forEach((element) {
+      images.add(Image.network(element));
+    });
+
+    return images;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -261,6 +193,19 @@ class _FullProgramScreenState extends State<FullProgramScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Hero(
+                            tag: widget.name,
+                            child: Container(
+                              height: 300,
+                              child: CarouselSlider(
+                                  items: getImages(),
+                                  options: CarouselOptions(
+                                    enableInfiniteScroll: false,
+                                    enlargeCenterPage: true,
+                                    autoPlay: true,
+                                  )),
+                            ),
+                          ),
                           Text(
                             widget.name,
                             style: TextStyle(
@@ -277,17 +222,36 @@ class _FullProgramScreenState extends State<FullProgramScreen> {
                           Row(
                             children: [
                               IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    try {
+                                      OYP
+                                          .GET(context)
+                                          .likeApp(
+                                              widget.category,
+                                              widget.appId,
+                                              widget.likes,
+                                              !isFav)
+                                          .then((value) {
+                                        setState(() {
+                                          isFav
+                                              ? widget.likes--
+                                              : widget.likes++;
+                                          isFav = !isFav;
+                                        });
+                                      });
+                                    } catch (e) {
+                                      Fluttertoast.showToast(
+                                          msg:
+                                              "There is something error \n Try again later",
+                                          backgroundColor: Colors.red);
+                                    }
+                                  },
                                   icon: Icon(
                                     isFav
                                         ? Icons.favorite
                                         : Icons.favorite_outline,
                                     color: Colors.red,
                                   )),
-                              Text(
-                                "${widget.Likes}",
-                                style: TextStyle(color: Colors.white),
-                              )
                             ],
                           ),
                           SizedBox(
@@ -297,7 +261,12 @@ class _FullProgramScreenState extends State<FullProgramScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ElevatedButton(
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.grey[100])),
                                   onPressed: () {
+                                    var info = getCurrency(value);
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -314,19 +283,17 @@ class _FullProgramScreenState extends State<FullProgramScreen> {
                                                 transactions: [
                                                   {
                                                     "amount": {
-                                                      "total":
-                                                          "${widget.price}",
-                                                      "currency":
-                                                          getCurrency(value),
+                                                      "total": "${info[2]}",
+                                                      "currency": info[1],
                                                       "details": {
                                                         "subtotal":
-                                                            "${widget.price}",
+                                                            "${info[2]}",
                                                         "shipping": '0',
                                                         "shipping_discount": 0
                                                       }
                                                     },
                                                     "description":
-                                                        "A payment for OYP to order ${widget.doc} program",
+                                                        "A payment for OYP to order program",
                                                     // "payment_options": {
                                                     //   "allowed_payment_method":
                                                     //       "INSTANT_FUNDING_SOURCE"
@@ -334,13 +301,10 @@ class _FullProgramScreenState extends State<FullProgramScreen> {
                                                     "item_list": {
                                                       "items": [
                                                         {
-                                                          "name":
-                                                              "${widget.doc} program",
+                                                          "name": " program",
                                                           "quantity": 1,
-                                                          "price":
-                                                              '${widget.price}',
-                                                          "currency":
-                                                              getCurrency(value)
+                                                          "price": '${info[2]}',
+                                                          "currency": info[1]
                                                         }
                                                       ]
                                                     }
@@ -392,24 +356,10 @@ class _FullProgramScreenState extends State<FullProgramScreen> {
                                             color: Colors.blueGrey[200],
                                             fontSize: 18),
                                       )),
-                                  DropdownMenuItem(
-                                      value: 3,
-                                      onTap: () {
-                                        setState(() {
-                                          value = 2;
-                                        });
-                                      },
-                                      child: Text(
-                                        "${(widget.price * 15.71).floor()}  EGP",
-                                        style: TextStyle(
-                                            color: Colors.blueGrey[200],
-                                            fontSize: 18),
-                                      )),
                                 ],
                                 onChanged: (valuee) {
                                   setState(() {
                                     value = valuee;
-                                    print(value);
                                   });
                                 },
                                 dropdownColor: Colors.grey[900],

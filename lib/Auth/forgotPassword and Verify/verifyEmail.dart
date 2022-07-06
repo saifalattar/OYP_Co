@@ -5,20 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-// a class to enter user email to wether verify account or forgot password
+// a class to enter user email to forgot password process
 
-class Verify extends StatefulWidget {
-  String? title;
-  String? buttonTitle;
-  void onPressed;
-  Verify({Key? key, this.title, this.onPressed, this.buttonTitle})
-      : super(key: key);
+class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({Key? key}) : super(key: key);
 
   @override
-  State<Verify> createState() => _VerifyState();
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
-class _VerifyState extends State<Verify> {
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -40,7 +36,7 @@ class _VerifyState extends State<Verify> {
                   children: [
                     Center(
                       child: Text(
-                        "${widget.title}",
+                        "Forgot Password",
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 30,
@@ -70,18 +66,13 @@ class _VerifyState extends State<Verify> {
                       height: 30,
                     ),
                     ElevatedButton(
-                      onPressed: () async {
-                        if (resetPassword.text.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text("Email field is empty"),
-                            backgroundColor: Colors.red,
-                          ));
-                        } else {
-                          widget.onPressed;
-                        }
+                      onPressed: () {
+                        OYP
+                            .GET(context)
+                            .forgotPassword(context, resetPassword.text);
                       },
                       child: Text(
-                        "${widget.buttonTitle}",
+                        "Send email with OTP",
                         style: TextStyle(color: Colors.black),
                       ),
                       style: ButtonStyle(

@@ -6,14 +6,15 @@ import 'package:OYP/mainScreens/home.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future isSignedIn() async {
-  bool isSigned = false;
+Future<bool> isSignedIn() async {
   SharedPreferences localData = await localDataBase;
-  if (localData.getString('token') == null ||
-      localData.getString('token')!.isEmpty) {
-    return isSigned;
+  if (localData.getString('token')!.isEmpty) {
+    userToken = localData.getString('token') as String;
+    print(userToken);
+    return true;
   } else {
-    return !isSigned;
+    print(userToken);
+    return false;
   }
 }
 
@@ -22,7 +23,9 @@ Future<void> main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) async {
     runApp(MaterialApp(
-      theme: ThemeData(scaffoldBackgroundColor: Colors.black),
+      theme: ThemeData(
+          scaffoldBackgroundColor: Colors.black,
+          appBarTheme: AppBarTheme(color: Colors.black)),
       home: await isSignedIn() ? Home() : LogIn(),
     ));
   });

@@ -1,5 +1,6 @@
 import 'package:OYP/Auth/Login.dart';
 import 'package:OYP/Auth/Signup.dart';
+import 'package:OYP/Classes/designsPage.dart';
 import 'package:OYP/Classes/sectionsWidgets.dart';
 import 'package:OYP/Classes/shared.dart';
 import 'package:OYP/cubit/bloc.dart';
@@ -7,6 +8,7 @@ import 'package:OYP/cubit/states.dart';
 import 'package:OYP/userSettings/likesPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
@@ -19,6 +21,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
+    print(userToken);
     return BlocProvider(
         create: (BuildContext context) => OYP(),
         child: BlocConsumer<OYP, states>(
@@ -40,7 +43,7 @@ class _HomeState extends State<Home> {
                     ],
                     backgroundColor: Colors.black,
                     title: Image.asset(
-                      "oyp/oyp black white.png",
+                      "iyp/IYP.png",
                       width: 110,
                     ),
                   ),
@@ -51,28 +54,36 @@ class _HomeState extends State<Home> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: [
-                              SectionWidget(title: "Mobile Apps").show(() {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return FullScreen(
-                                    title: "Mobile Apps",
-                                    Collection: "MobileApps",
-                                  );
-                                }));
-                              }),
-                              SectionWidget(title: "Console \n Applications")
+                              SectionWidget(image: "iyp/iyp apps b.png")
                                   .show(() {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
                                   return FullScreen(
-                                    title: "Console Applications",
-                                    Collection: "ConsoleApps",
+                                    title: "Mobile apps",
+                                    document: "apps",
                                   );
+                                }));
+                              }),
+                              SectionWidget(image: "iyp/iyp programs b.png")
+                                  .show(() {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return FullScreen(
+                                    document: "console",
+                                    title: "Console Applications",
+                                  );
+                                }));
+                              }),
+                              SectionWidget(image: "iyp/iyp designs b.png")
+                                  .show(() {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return DesignPage();
                                 }));
                               })
                             ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ));

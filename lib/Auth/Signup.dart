@@ -1,13 +1,9 @@
 import 'package:OYP/Auth/forgotPassword%20and%20Verify/verifyEmail.dart';
-import 'package:OYP/Classes/shared.dart';
 import 'package:OYP/cubit/bloc.dart';
 import 'package:OYP/cubit/states.dart';
-import 'package:OYP/mainScreens/home.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUP extends StatefulWidget {
   const SignUP({Key? key}) : super(key: key);
@@ -21,7 +17,6 @@ var email = TextEditingController();
 var password = TextEditingController();
 var resetPassword = TextEditingController();
 var otp = TextEditingController();
-String userOTP = "";
 
 class _SignUPState extends State<SignUP> {
   @override
@@ -36,7 +31,7 @@ class _SignUPState extends State<SignUP> {
                       height: double.infinity,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage("oyp/signup.jpg"),
+                          image: AssetImage("iyp/signup.jpg"),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -56,7 +51,7 @@ class _SignUPState extends State<SignUP> {
                                   fontSize: 28),
                             ),
                             Container(
-                              child: Image.asset("oyp/oyp gray.png"),
+                              child: Image.asset("iyp/IYP.png"),
                               width: 100,
                             ),
                             SizedBox(
@@ -130,8 +125,8 @@ class _SignUPState extends State<SignUP> {
                               width: MediaQuery.of(context).size.width / 1.6,
                               child: RaisedButton(
                                 onPressed: () async {
-                                  OYP.GET(context).signUp(context, email.text,
-                                      password.text, username.text);
+                                  OYP.GET(context).verifyUser(
+                                      context, email.text, password.text);
                                 },
                                 child: const Text("Create Your Account"),
                                 color: Colors.grey[100],
@@ -165,7 +160,7 @@ class _SignInState extends State<SignIn> {
                     height: double.infinity,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage("oyp/signup.jpg"),
+                        image: AssetImage("iyp/signup.jpg"),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -184,8 +179,9 @@ class _SignInState extends State<SignIn> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 28),
                           ),
+                          SizedBox(height: 50),
                           Container(
-                            child: Image.asset("oyp/oyp gray.png"),
+                            child: Image.asset("iyp/IYP.png"),
                             width: 100,
                           ),
                           SizedBox(
@@ -239,15 +235,8 @@ class _SignInState extends State<SignIn> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => Verify(
-                                              title: "Forgot Password",
-                                              onPressed: OYP
-                                                  .GET(context)
-                                                  .forgotPassword(context,
-                                                      resetPassword.text),
-                                              buttonTitle:
-                                                  "Send email with OTP",
-                                            )));
+                                        builder: (context) =>
+                                            ForgotPasswordPage()));
                               },
                               child: Text("Forgot your password ?",
                                   style: TextStyle(
@@ -260,9 +249,15 @@ class _SignInState extends State<SignIn> {
                             width: MediaQuery.of(context).size.width / 1.6,
                             child: RaisedButton(
                               onPressed: () async {
-                                OYP
-                                    .GET(context)
-                                    .logIn(context, email.text, password.text);
+                                try {
+                                  OYP.GET(context).logIn(
+                                      context, email.text, password.text);
+                                } catch (e) {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                          "There is something error\nTry again later",
+                                      backgroundColor: Colors.red);
+                                }
                               },
                               child: Text("Log In"),
                               color: Colors.grey[100],
