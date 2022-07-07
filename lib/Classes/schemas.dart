@@ -2,7 +2,8 @@ import 'package:OYP/cubit/bloc.dart';
 import 'package:OYP/cubit/states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_downloader/image_downloader.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Program extends StatefulWidget {
@@ -121,28 +122,37 @@ class Design extends StatelessWidget {
     return Stack(
       alignment: AlignmentDirectional.bottomStart,
       children: [
-        Center(
-            child: PinchZoomImage(
-                zoomedBackgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
-                hideStatusBarWhileZooming: true,
-                onZoomStart: () {
-                  print('Zoom started');
-                },
-                onZoomEnd: () {
-                  print('Zoom finished');
-                },
-                image: Image.network("${this.image}"))),
+        Center(child: Image.network("${this.image}")),
         Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text(
-                "${this.title}",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.white),
+              Row(
+                children: [
+                  Text(
+                    "${this.title}",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white),
+                  ),
+                  IconButton(
+                      onPressed: () async {
+                        await ImageDownloader.downloadImage("${this.image}")
+                            .then((value) => Fluttertoast.showToast(
+                                msg: "(${this.title}) downloaded successfully",
+                                backgroundColor: Colors.green))
+                            .catchError((onError) => Fluttertoast.showToast(
+                                msg:
+                                    "(${this.title}) can't be downloaded \n Try again later",
+                                backgroundColor: Colors.red));
+                      },
+                      icon: Icon(
+                        Icons.download_for_offline_rounded,
+                        color: Colors.white,
+                      ))
+                ],
               ),
               Text(
                 "By",

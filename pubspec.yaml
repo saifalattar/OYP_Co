@@ -18,6 +18,8 @@ dependencies:
   url_launcher_android: ^6.0.17
   pin_code_fields: ^7.4.0
   bloc: ^8.0.2
+  image_downloader: ^0.31.0
+  liquid_pull_to_refresh: ^3.0.1
   intro_slider: ^3.0.3
   flutter_launcher_icons:
   flutter_signin_button: ^2.0.0
@@ -25,7 +27,6 @@ dependencies:
   fluttertoast: ^8.0.8
   shared_preferences: ^2.0.13
   carousel_slider: ^4.1.1
-  sensors_plus: ^1.2.2
 
 
 

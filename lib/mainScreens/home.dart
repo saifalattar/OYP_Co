@@ -8,7 +8,6 @@ import 'package:OYP/cubit/states.dart';
 import 'package:OYP/userSettings/likesPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sensors_plus/sensors_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {

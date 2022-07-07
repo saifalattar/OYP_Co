@@ -7,13 +7,15 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<bool> isSignedIn() async {
-  SharedPreferences localData = await localDataBase;
-  if (localData.getString('token')!.isEmpty) {
-    userToken = localData.getString('token') as String;
-    print(userToken);
-    return true;
-  } else {
-    print(userToken);
+  final SharedPreferences localData = await SharedPreferences.getInstance();
+  try {
+    if (localData.getString('token')!.isNotEmpty) {
+      userToken = localData.getString('token') as String;
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
     return false;
   }
 }

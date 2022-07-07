@@ -29,7 +29,7 @@ class OYP extends Cubit<states> {
       "password": password,
       "name": name
     }).then((value) async {
-      SharedPreferences localData = await localDataBase;
+      SharedPreferences localData = await SharedPreferences.getInstance();
       localData
           .setString("token", value.data['token'])
           .then((value) => Navigator.pushAndRemoveUntil(
@@ -48,7 +48,7 @@ class OYP extends Cubit<states> {
       "email": email,
       "password": password,
     }).then((value) async {
-      SharedPreferences localData = await localDataBase;
+      SharedPreferences localData = await SharedPreferences.getInstance();
       localData.setString("token", value.data['token']).then((value) =>
           Navigator.pushAndRemoveUntil(
               context,
@@ -63,7 +63,7 @@ class OYP extends Cubit<states> {
   }
 
   void signOut(context) async {
-    SharedPreferences localData = await localDataBase;
+    SharedPreferences localData = await SharedPreferences.getInstance();
     await localData.remove("token").then((value) => Navigator.push(
         context, MaterialPageRoute(builder: (context) => LogIn())));
   }
@@ -166,13 +166,18 @@ class OYP extends Cubit<states> {
   }
 
   Future getDesigns(String token) async {
-    designs.clear();
-    await Dio().get("$BASE_URL/oyp/allApps/designs/$token").then((value) {
-      value.data.forEach((app) {
-        designs.add(
-            Design(app["image"], app["title"], app["artist"], app["link"]));
+    if (designs.isEmpty) {
+      designs.clear();
+      await Dio().get("$BASE_URL/oyp/allApps/designs/$token").then((value) {
+        value.data.forEach((app) {
+          designs.add(
+              Design(app["image"], app["title"], app["artist"], app["link"]));
+        });
       });
-    });
+      designs.shuffle();
+    }
+
+    emit(GetNewDesigns());
     return designs;
   }
 
